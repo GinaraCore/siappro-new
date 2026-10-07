@@ -1,26 +1,624 @@
-@import "tailwindcss";
+/* ============================================================
+   SIAP-Pro: Executive State Protocol Design System
+   Dewan Ekonomi Nasional Republik Indonesia
+   Light Mode Standard: Clean White Canvas, Crisp Slate Borders
+   Typography: Inter + JetBrains Mono
+   ============================================================ */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ------------------------------------------------------------------
+   CSS Custom Properties (Light Mode Tokens)
+   ------------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Canvas & Surface Palette (Light Canvas & Pure White Cards) --- */
+  --surface-canvas:   #f8fafc; /* Slate 50 */
+  --surface-card:     #ffffff; /* Pure White */
+  --surface-elevated: #ffffff;
+  --surface-panel:    #ffffff;
+  --surface-muted:    #f1f5f9; /* Slate 100 */
+  --surface-hover:    #f1f5f9;
+
+  /* Legacy aliases for backward-compatible components */
+  --surface-950: #f8fafc;
+  --surface-900: #ffffff;
+  --surface-800: #ffffff;
+  --surface-750: #f8fafc;
+  --surface-700: #f1f5f9;
+  --surface-600: #e2e8f0;
+  --surface-500: #cbd5e1;
+  --surface-400: #94a3b8;
+  --surface-300: #64748b;
+  --surface-200: #475569;
+
+  /* --- Borders (Crisp Light Hairlines) --- */
+  --border-subtle:   #e2e8f0; /* Slate 200 */
+  --border-distinct: #cbd5e1; /* Slate 300 */
+  --border-strong:   #94a3b8; /* Slate 400 */
+  --border-accent:   rgba(180, 83, 9, 0.25);
+
+  /* --- Institutional Text Colors (High Contrast on White) --- */
+  --text-primary:   #0f172a; /* Slate 900: 15:1+ contrast on white */
+  --text-secondary: #475569; /* Slate 600: 6.5:1+ contrast */
+  --text-muted:     #64748b; /* Slate 500: clear labels */
+  --text-gold:      #a16207; /* Amber 700 / State Gold Brass */
+
+  /* --- State Brass Gold Brand Accent --- */
+  --gold-50:  #fffbeb;
+  --gold-100: #fef3c7;
+  --gold-200: #fde68a;
+  --gold-300: #fcd34d;
+  --gold-400: #fbbf24;
+  --gold-500: #b45309; /* Primary Amber / Brass Button Color */
+  --gold-600: #92400e;
+  --gold-700: #78350f;
+  --gold-800: #451a03;
+  --gold-900: #2a1102;
+  --gold-subtle: rgba(180, 83, 9, 0.08);
+
+  /* --- Functional Status Colors (Light Theme Optimized) --- */
+  --status-green:        #047857; /* Emerald 700 */
+  --status-green-bg:     #ecfdf5; /* Emerald 50 */
+  --status-green-border: #a7f3d0; /* Emerald 200 */
+
+  --status-blue:         #1d4ed8; /* Blue 700 */
+  --status-blue-bg:      #eff6ff; /* Blue 50 */
+  --status-blue-border:  #bfdbfe; /* Blue 200 */
+
+  --status-yellow:        #b45309; /* Amber 700 */
+  --status-yellow-bg:     #fffbeb; /* Amber 50 */
+  --status-yellow-border: #fde68a; /* Amber 200 */
+
+  --status-red:          #b91c1c; /* Red 700 */
+  --status-red-bg:       #fef2f2; /* Red 50 */
+  --status-red-border:   #fecaca; /* Red 200 */
+
+  /* --- Geometry (Disciplined Radii) --- */
+  --radius-xs: 3px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* --- Elevation & Shadows (Clean, physical softness) --- */
+  --shadow-flat: none;
+  --shadow-sm:   0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md:   0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg:   0 10px 25px rgba(15, 23, 42, 0.08);
+  --shadow-gold: none;
+  --shadow-gold-lg: none;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Typography: Inter --- */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* --- Layout Constants --- */
+  --nav-height-mobile: 56px;
+  --sidebar-width: 260px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ------------------------------------------------------------------
+   CSS Reset & Base
+   ------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background-color: var(--surface-canvas);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--surface-canvas);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ------------------------------------------------------------------
+   Typography Scale
+   ------------------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
+}
+
+h1 { font-size: 1.5rem; font-weight: 700; }
+h2 { font-size: 1.25rem; font-weight: 600; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+h4 { font-size: 0.95rem; font-weight: 600; }
+h5 { font-size: 0.875rem; font-weight: 600; }
+h6 { font-size: 0.8125rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+p { color: var(--text-secondary); }
+
+a {
+  color: var(--text-gold);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover { color: var(--gold-600); }
+
+/* Tabular figures for numbers, timers, dates */
+.num-tabular, time, .tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ------------------------------------------------------------------
+   Layout Utilities
+   ------------------------------------------------------------------ */
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px)  { .container { padding: 0 1.5rem; } }
+@media (min-width: 1024px) { .container { padding: 0 2rem; } }
+
+/* ------------------------------------------------------------------
+   Solid Card Components (Pure White, Crisp Borders)
+   ------------------------------------------------------------------ */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.card:hover {
+  border-color: var(--border-distinct);
+}
+
+.card-elevated {
+  background: var(--surface-card);
+  border: 1px solid var(--border-distinct);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.card-glass {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ------------------------------------------------------------------
+   Button Variants (Crisp, high-contrast, min 44px tap target on mobile)
+   ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  min-height: 38px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* Primary Action Button: State Brass Gold (Amber 700), crisp on white */
+.btn-primary {
+  background: var(--gold-500);
+  color: #ffffff;
+  border-color: var(--gold-600);
+  font-weight: 600;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--gold-600);
+  border-color: var(--gold-700);
+}
+.btn-primary:active:not(:disabled) {
+  background: var(--gold-700);
+}
+
+/* Secondary Button: Pure white with slate border */
+.btn-secondary {
+  background: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-distinct);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-muted);
+  border-color: var(--border-strong);
+}
+
+/* Ghost Button: Flat, accessible */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+
+/* Danger Button: Crisp red alert button */
+.btn-danger {
+  background: var(--status-red-bg);
+  color: var(--status-red);
+  border-color: var(--status-red-border);
+}
+.btn-danger:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; min-height: 32px; }
+.btn-lg { padding: 0.75rem 1.5rem; font-size: 0.95rem; min-height: 44px; }
+.btn-icon { padding: 0.5rem; width: 2.35rem; height: 2.35rem; min-height: 2.35rem; }
+
+/* ------------------------------------------------------------------
+   Form Elements (Clean White Inputs, Clear Focus Ring)
+   ------------------------------------------------------------------ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  background: #ffffff;
+  border: 1px solid var(--border-distinct);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 1px var(--gold-500);
+}
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: var(--status-red);
+  box-shadow: 0 0 0 1px var(--status-red);
+}
+
+.form-error {
+  font-size: 0.775rem;
+  color: var(--status-red);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.form-hint {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ------------------------------------------------------------------
+   Disciplined Status Badges (High Contrast on White)
+   ------------------------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.725rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+}
+.badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge-green {
+  background: var(--status-green-bg);
+  color: var(--status-green);
+  border-color: var(--status-green-border);
+}
+.badge-green::before { background: var(--status-green); }
+
+.badge-red {
+  background: var(--status-red-bg);
+  color: var(--status-red);
+  border-color: var(--status-red-border);
+}
+.badge-red::before { background: var(--status-red); }
+
+.badge-yellow {
+  background: var(--status-yellow-bg);
+  color: var(--status-yellow);
+  border-color: var(--status-yellow-border);
+}
+.badge-yellow::before { background: var(--status-yellow); }
+
+.badge-blue {
+  background: var(--status-blue-bg);
+  color: var(--status-blue);
+  border-color: var(--status-blue-border);
+}
+.badge-blue::before { background: var(--status-blue); }
+
+.badge-gold {
+  background: var(--gold-subtle);
+  color: var(--gold-500);
+  border-color: var(--border-accent);
+}
+.badge-gold::before { background: var(--gold-500); }
+
+/* ------------------------------------------------------------------
+   Checklist Item (Light Mode Operational Verification)
+   ------------------------------------------------------------------ */
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+.checklist-item:hover {
+  border-color: var(--border-distinct);
+  background: var(--surface-muted);
+}
+.checklist-item.checked {
+  border-color: var(--status-green-border);
+  background: var(--status-green-bg);
+}
+
+/* Custom Checkbox */
+.checkbox {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid var(--border-strong);
+  background: #ffffff;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  place-content: center;
+  margin-top: 2px;
+}
+.checkbox:checked {
+  background: var(--gold-500);
+  border-color: var(--gold-600);
+}
+.checkbox:checked::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.35rem;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg) translateY(-1px);
+}
+.checkbox:focus-visible {
+  outline: 2px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------
+   Navigation (Sidebar Light Standard)
+   ------------------------------------------------------------------ */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.875rem;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: none;
+  text-decoration: none;
+  width: 100%;
+  position: relative;
+}
+.nav-item:hover {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+.nav-item.active {
+  background: var(--gold-subtle);
+  color: var(--gold-500);
+  border-color: var(--border-accent);
+  font-weight: 600;
+}
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: var(--gold-500);
+  border-radius: 0 2px 2px 0;
+}
+.nav-item.active .nav-icon { color: var(--gold-500); }
+
+/* ------------------------------------------------------------------
+   Divider
+   ------------------------------------------------------------------ */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0.75rem 0;
+}
+.divider-gold {
+  background: var(--border-accent);
+}
+
+/* ------------------------------------------------------------------
+   Scrollbar
+   ------------------------------------------------------------------ */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  {
+  background: var(--border-distinct);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ------------------------------------------------------------------
+   Utility Classes
+   ------------------------------------------------------------------ */
+.text-gold      { color: var(--gold-500); }
+.text-muted     { color: var(--text-muted); }
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-green     { color: var(--status-green); }
+.text-red       { color: var(--status-red); }
+
+.bg-surface-card     { background: var(--surface-card); }
+.bg-surface-canvas   { background: var(--surface-canvas); }
+.bg-surface-elevated { background: var(--surface-elevated); }
+
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+
+.gold-text-accent {
+  color: var(--gold-500);
+  font-weight: 600;
+}
+
+.gold-gradient-text {
+  color: var(--gold-500);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------
+   App Shell Layout
+   ------------------------------------------------------------------ */
+.app-wrapper {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .app-wrapper {
+    flex-direction: row;
+  }
+}
+
+.page-content {
+  flex: 1;
+  padding-bottom: calc(var(--nav-height-mobile) + 1.5rem);
+}
+@media (min-width: 1024px) {
+  .page-content {
+    padding-bottom: 2rem;
+    padding-left: var(--sidebar-width);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Image / File Upload Zone
+   ------------------------------------------------------------------ */
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  background: #ffffff;
+  border: 1px dashed var(--border-distinct);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  text-align: center;
+  min-height: 130px;
+}
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--gold-500);
+  background: var(--gold-subtle);
+}
+
+/* ------------------------------------------------------------------
+   Mobile Tap Target Compliance (anti-slop R-03: minimum 44px)
+   ------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .btn { min-height: 44px; }
+  .form-input,
+  .form-select,
+  .form-textarea { min-height: 46px; font-size: 16px; /* prevent iOS auto-zoom */ }
+  .checkbox { width: 1.35rem; height: 1.35rem; }
+  .nav-item { min-height: 44px; }
 }
