@@ -500,54 +500,7 @@ export default function ChecklistPage({
         <p className="kegiatan-info-tgl num-tabular">{formatTanggalLong(kegiatan.tanggal)}</p>
       </section>
 
-      {/* High-Density Verification KPI Stats Bar */}
-      <section className="kpi-compact-bar card" aria-label="Ringkasan Verifikasi">
-        <div className="kpi-metric">
-          <span className="kpi-label">Butir Wajib Terpenuhi</span>
-          <div className="kpi-val-row">
-            <span className="kpi-number num-tabular" style={{ color: progress === 100 ? 'var(--status-green)' : 'var(--gold-400)' }}>
-              {filledWajib.length} / {wajibItems.length}
-            </span>
-            <span className="kpi-pct num-tabular">({progress}%)</span>
-          </div>
-          <div className="kpi-bar-track">
-            <div
-              className="kpi-bar-fill"
-              style={{
-                width: `${progress}%`,
-                background: progress === 100 ? 'var(--status-green)' : 'var(--gold-500)',
-              }}
-            />
-          </div>
-        </div>
 
-        <div className="kpi-divider" />
-
-        <div className="kpi-metric">
-          <span className="kpi-label">Bukti Foto Dokumentasi</span>
-          <div className="kpi-val-row">
-            <span className="kpi-number num-tabular" style={{ color: totalFotoCount > 0 ? '#60a5fa' : 'var(--text-muted)' }}>
-              {totalFotoCount} Foto
-            </span>
-            <span className="kpi-sub-text">Terlampir</span>
-          </div>
-          <span className="kpi-caption">Dokumentasi fisik hari H</span>
-        </div>
-
-        <div className="kpi-divider" />
-
-        <div className="kpi-metric">
-          <span className="kpi-label">Status ACC Super Admin</span>
-          <div className="kpi-val-row">
-            <span className={cn('kpi-status-text', isApproved ? 'text-green' : isPendingAcc ? 'text-blue' : 'text-yellow')}>
-              {getStatusLaporanLabel(savedStatus)}
-            </span>
-          </div>
-          <span className="kpi-caption">
-            {isApproved ? 'Siap cetak / download PDF' : 'Menunggu persetujuan pimpinan'}
-          </span>
-        </div>
-      </section>
 
       {/* Validation Errors Box */}
       {validationErrors.length > 0 && (
@@ -849,81 +802,82 @@ function CompactChecklistItemRow({
 
   return (
     <div className={cn('compact-item-row', isChecked && 'row-checked', hasValidationError && 'row-error')}>
-      {/* 1. Left Checkbox & Number */}
-      <div className="citem-col-check">
-        <input
-          type="checkbox"
-          id={`chk-${item.id}`}
-          className="checkbox"
-          checked={isChecked}
-          onChange={e => !isReadOnly && onUpdate({ dicentang: e.target.checked })}
-          disabled={isReadOnly}
-          aria-label={`Verifikasi ${item.teks}`}
-        />
-        <span className="citem-number num-tabular">#{item.nomor}</span>
-      </div>
-
-      {/* 2. Middle Title & Badges */}
-      <div className="citem-col-body">
-        <div className="citem-title-row">
-          <label htmlFor={`chk-${item.id}`} className={cn('citem-label', isChecked && 'label-checked')}>
-            {item.teks}
-          </label>
-          <div className="citem-tags">
-            {item.wajib ? (
-              <span className="citem-tag tag-wajib">Wajib</span>
-            ) : (
-              <span className="citem-tag tag-opsional">Opsional</span>
-            )}
-            {item.wajibFoto && (
-              <span className="citem-tag tag-foto">
-                <Camera size={10} aria-hidden="true" />
-                <span>Wajib Foto</span>
-              </span>
-            )}
-          </div>
+      {/* 1. Top Section: Checkbox + Number + Full-Width Title & Badges */}
+      <div className="citem-top-section">
+        <div className="citem-col-check">
+          <input
+            type="checkbox"
+            id={`chk-${item.id}`}
+            className="checkbox citem-checkbox"
+            checked={isChecked}
+            onChange={e => !isReadOnly && onUpdate({ dicentang: e.target.checked })}
+            disabled={isReadOnly}
+            aria-label={`Verifikasi ${item.teks}`}
+          />
+          <span className="citem-number num-tabular">#{item.nomor}</span>
         </div>
 
-        {/* Existing Note Snippet or Inline Input */}
-        {hasNote && !showNoteInput && (
-          <div className="citem-note-display">
-            <span className="citem-note-text">“{jawaban.keterangan}”</span>
-            {!isReadOnly && (
+        <div className="citem-col-body">
+          <div className="citem-title-row">
+            <label htmlFor={`chk-${item.id}`} className={cn('citem-label', isChecked && 'label-checked')}>
+              {item.teks}
+            </label>
+            <div className="citem-tags">
+              {item.wajib ? (
+                <span className="citem-tag tag-wajib">Wajib</span>
+              ) : (
+                <span className="citem-tag tag-opsional">Opsional</span>
+              )}
+              {item.wajibFoto && (
+                <span className="citem-tag tag-foto">
+                  <Camera size={10} aria-hidden="true" />
+                  <span>Wajib Foto</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Existing Note Snippet or Inline Input */}
+          {hasNote && !showNoteInput && (
+            <div className="citem-note-display">
+              <span className="citem-note-text">“{jawaban.keterangan}”</span>
+              {!isReadOnly && (
+                <button
+                  type="button"
+                  className="btn-icon-subtle"
+                  onClick={() => setShowNoteInput(true)}
+                  title="Ubah catatan"
+                >
+                  <Edit2 size={11} />
+                </button>
+              )}
+            </div>
+          )}
+
+          {showNoteInput && !isReadOnly && (
+            <div className="citem-note-edit">
+              <input
+                type="text"
+                className="citem-inline-input"
+                value={jawaban?.keterangan ?? ''}
+                onChange={e => onUpdate({ keterangan: e.target.value })}
+                placeholder="Tulis catatan kondisi riil lapangan..."
+                autoFocus
+              />
               <button
                 type="button"
-                className="btn-icon-subtle"
-                onClick={() => setShowNoteInput(true)}
-                title="Ubah catatan"
+                className="btn-sm btn-ghost"
+                style={{ fontSize: '0.725rem', padding: '0.2rem 0.5rem' }}
+                onClick={() => setShowNoteInput(false)}
               >
-                <Edit2 size={11} />
+                Selesai
               </button>
-            )}
-          </div>
-        )}
-
-        {showNoteInput && !isReadOnly && (
-          <div className="citem-note-edit">
-            <input
-              type="text"
-              className="citem-inline-input"
-              value={jawaban?.keterangan ?? ''}
-              onChange={e => onUpdate({ keterangan: e.target.value })}
-              placeholder="Tulis catatan kondisi riil lapangan..."
-              autoFocus
-            />
-            <button
-              type="button"
-              className="btn-sm btn-ghost"
-              style={{ fontSize: '0.725rem', padding: '0.2rem 0.5rem' }}
-              onClick={() => setShowNoteInput(false)}
-            >
-              Selesai
-            </button>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* 3. Right Proof & Actions (High Density) */}
+      {/* 2. Actions & Photos Strip (Indented on Mobile) */}
       <div className="citem-col-actions">
         {/* Photos Thumbnails */}
         {hasPhotos && (
@@ -1292,15 +1246,15 @@ const checklistStyles = `
     flex-direction: column;
   }
 
-  /* COMPACT ITEM ROW (High Density UX) */
+  /* COMPACT ITEM ROW (High Density & Mobile Responsive) */
   .compact-item-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.55rem 1rem;
+    padding: 0.65rem 1rem;
     border-bottom: 1px solid var(--border-subtle);
     gap: 0.75rem;
-    min-height: 44px;
+    min-height: 48px;
     transition: background var(--transition-fast);
   }
   .compact-item-row:last-child {
@@ -1317,17 +1271,35 @@ const checklistStyles = `
     border-color: var(--status-red-border);
   }
 
+  /* Top Section: Checkbox + Number + Label & Tags */
+  .citem-top-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 0;
+  }
+
   .citem-col-check {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .citem-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--gold-500);
+    border-radius: 4px;
+    margin: 0;
   }
   .citem-number {
     font-size: 0.725rem;
     color: var(--text-muted);
     font-weight: 600;
-    width: 22px;
+    min-width: 22px;
   }
 
   .citem-col-body {
@@ -1335,37 +1307,41 @@ const checklistStyles = `
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.25rem;
   }
   .citem-title-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 0.5rem;
     flex-wrap: wrap;
   }
   .citem-label {
-    font-size: 0.825rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--text-primary);
     cursor: pointer;
-    line-height: 1.3;
+    line-height: 1.35;
+    word-break: break-word;
   }
   .label-checked {
     color: var(--text-primary);
   }
   .citem-tags {
-    display: flex;
-    gap: 0.25rem;
+    display: inline-flex;
+    gap: 0.3rem;
     align-items: center;
+    flex-shrink: 0;
   }
   .citem-tag {
     font-size: 0.625rem;
-    padding: 0.1rem 0.35rem;
+    padding: 0.12rem 0.4rem;
     border-radius: var(--radius-xs);
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 0.2rem;
+    gap: 0.25rem;
+    white-space: nowrap;
+    line-height: 1.2;
   }
   .tag-wajib {
     background: var(--gold-subtle);
@@ -1378,20 +1354,28 @@ const checklistStyles = `
     border: 1px solid var(--border-subtle);
   }
   .tag-foto {
-    background: rgba(96, 165, 250, 0.1);
+    background: rgba(96, 165, 250, 0.12);
     color: #60a5fa;
-    border: 1px solid rgba(59, 130, 246, 0.25);
+    border: 1px solid rgba(59, 130, 246, 0.3);
   }
 
   .citem-note-display {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
+    background: var(--surface-muted);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-xs);
+    border-left: 2px solid var(--gold-400);
+    max-width: 100%;
   }
   .citem-note-text {
     font-size: 0.725rem;
     font-style: italic;
     color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .btn-icon-subtle {
     background: none;
@@ -1407,20 +1391,21 @@ const checklistStyles = `
   .citem-note-edit {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     margin-top: 0.2rem;
+    width: 100%;
   }
   .citem-inline-input {
     flex: 1;
     font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0.3rem 0.5rem;
     border-radius: var(--radius-xs);
     background: var(--surface-card);
     border: 1px solid var(--border-distinct);
     color: var(--text-primary);
   }
 
-  /* Col Actions (Right) */
+  /* Col Actions */
   .citem-col-actions {
     display: flex;
     align-items: center;
@@ -1430,12 +1415,13 @@ const checklistStyles = `
   .citem-photo-strip {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.35rem;
+    flex-wrap: wrap;
   }
   .cphoto-thumb-wrap {
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: var(--radius-xs);
     overflow: hidden;
     border: 1px solid var(--border-distinct);
@@ -1450,10 +1436,10 @@ const checklistStyles = `
     position: absolute;
     top: 1px;
     right: 1px;
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
     color: white;
     border: none;
     display: flex;
@@ -1465,36 +1451,41 @@ const checklistStyles = `
   .btn-citem-upload {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    font-size: 0.675rem;
-    font-weight: 500;
-    padding: 0.25rem 0.5rem;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
     border-radius: var(--radius-xs);
     background: var(--surface-muted);
-    border: 1px dashed var(--border-subtle);
+    border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
     cursor: pointer;
     transition: all var(--transition-fast);
+    white-space: nowrap;
   }
   .btn-citem-upload:hover {
     border-color: #60a5fa;
     color: #60a5fa;
+    background: rgba(96, 165, 250, 0.08);
   }
   .btn-citem-note {
     display: inline-flex;
     align-items: center;
-    gap: 0.2rem;
-    font-size: 0.675rem;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     color: var(--text-muted);
-    background: none;
-    border: none;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-subtle);
     cursor: pointer;
-    padding: 0.2rem 0.4rem;
+    padding: 0.3rem 0.55rem;
     border-radius: var(--radius-xs);
+    white-space: nowrap;
+    transition: all var(--transition-fast);
   }
   .btn-citem-note:hover {
     color: var(--text-secondary);
-    background: var(--surface-muted);
+    border-color: var(--border-distinct);
   }
 
   /* Catatan Section */
@@ -1712,5 +1703,199 @@ const checklistStyles = `
     border: none;
     color: white;
     cursor: pointer;
+  }
+
+  /* ========================================================== */
+  /* MOBILE REFLOW & DEDICATED MOBILE LAYOUT (< 640px)          */
+  /* ========================================================== */
+  @media (max-width: 640px) {
+    .checklist-page {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      gap: 0.85rem;
+      padding-bottom: 6.5rem; /* Menjamin bottom nav mobile tidak menutupi aksi terbawah */
+    }
+
+    /* Top Navigation */
+    .checklist-topbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .checklist-title {
+      font-size: 1.05rem;
+    }
+
+    /* Kegiatan Info Card */
+    .kegiatan-info-card {
+      padding: 0.75rem 1rem;
+      gap: 0.4rem;
+    }
+    .kegiatan-info-nama {
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+    .kegiatan-info-row {
+      flex-wrap: wrap;
+      gap: 0.35rem 0.5rem;
+      font-size: 0.725rem;
+    }
+
+    /* Compact KPI Bar */
+    .kpi-compact-bar {
+      grid-template-columns: 1fr;
+      padding: 0.85rem 1rem;
+      gap: 0.85rem;
+    }
+    .kpi-divider {
+      display: none;
+    }
+
+    /* Group Header Accordion */
+    .group-header {
+      padding: 0.75rem 0.85rem;
+    }
+    .group-name {
+      font-size: 0.825rem;
+    }
+
+    /* Checklist Item Mobile Card Reflow */
+    .compact-item-row {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0.75rem 0.85rem;
+      gap: 0.55rem;
+    }
+
+    .citem-top-section {
+      width: 100%;
+      align-items: flex-start;
+      gap: 0.65rem;
+    }
+
+    .citem-col-check {
+      padding-top: 2px;
+      gap: 0.4rem;
+    }
+
+    .citem-checkbox {
+      width: 19px;
+      height: 19px;
+    }
+
+    .citem-col-body {
+      width: 100%;
+      gap: 0.35rem;
+    }
+
+    .citem-title-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+      width: 100%;
+    }
+
+    .citem-label {
+      font-size: 0.875rem;
+      line-height: 1.4;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .citem-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+    }
+
+    /* Action Buttons Row: Indented to align flush under item text */
+    .citem-col-actions {
+      width: 100%;
+      padding-left: 2.15rem; /* indents past checkbox + number */
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: flex-start;
+    }
+
+    .btn-citem-upload,
+    .btn-citem-note {
+      min-height: 34px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.725rem;
+    }
+
+    .citem-photo-strip {
+      width: 100%;
+      margin-bottom: 0.25rem;
+    }
+
+    .cphoto-thumb-wrap {
+      width: 44px;
+      height: 44px;
+    }
+
+    .citem-note-display {
+      margin-left: 2.15rem;
+      max-width: calc(100% - 2.15rem);
+      white-space: normal;
+    }
+    .citem-note-text {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    .citem-note-edit {
+      margin-left: 2.15rem;
+      width: calc(100% - 2.15rem);
+      flex-wrap: wrap;
+    }
+
+    /* Bottom Action Panel on Mobile */
+    .checklist-bottom-panel {
+      padding: 1rem;
+      gap: 1rem;
+    }
+    .bottom-panel-header {
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .bottom-panel-summary {
+      min-width: 0;
+      width: 100%;
+    }
+    .bottom-panel-metrics {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .metric-chip {
+      padding: 0.5rem 0.65rem;
+    }
+    .bottom-panel-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .btn-group-left,
+    .btn-group-admin,
+    .btn-group-download {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      margin-left: 0 !important;
+      gap: 0.5rem;
+    }
+    .btn-group-left .btn,
+    .btn-group-admin .btn,
+    .btn-group-download .btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 44px;
+      font-size: 0.825rem;
+    }
   }
 `

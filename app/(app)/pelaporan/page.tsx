@@ -634,4 +634,16 @@ const pelaporanStyles = `
     border-color: #fde68a;
     color: var(--gold-500);
   }
+
+  @media (max-width: 640px) {
+    .pelaporan-page {
+      padding-bottom: 5.5rem;
+    }
+    .fase-btn {
+      min-width: 100%;
+    }
+    .pcard-header {
+      flex-wrap: wrap;
+    }
+  }
 `
